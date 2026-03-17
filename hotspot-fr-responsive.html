@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Widget 05 – Hot Spot</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6f9;
+    --surface: #ffffff;
+    --border: #e2e7ef;
+    --text: #1a2233;
+    --text-muted: #6b7a99;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --radius: 12px;
+    --shadow: 0 2px 16px rgba(30,40,80,.08);
+    --transition: .28s cubic-bezier(.4,0,.2,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: clamp(16px, 4vw, 32px) clamp(12px, 4vw, 16px) 48px;
+    min-height: 100vh;
+  }
+  .widget-section { max-width: 860px; margin: 0 auto; }
+
+  /* ── DESKTOP : diagramme ── */
+  .hotspot-container {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    background: linear-gradient(135deg, #0f1f3d 0%, #1e3a5f 50%, #0a2240 100%);
+    min-height: 520px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hotspot-bg-text {
+    font-size: clamp(4rem, 10vw, 8rem); opacity: .04; font-weight: 700;
+    position: absolute; color: #fff; user-select: none; letter-spacing: -.05em;
+    pointer-events: none;
+  }
+  .hotspot-diagram {
+    position: relative; width: 520px; height: 320px;
+  }
+  .hs-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90px; height: 90px; border-radius: 50%;
+    background: rgba(37,99,235,.2);
+    border: 2px solid rgba(37,99,235,.6);
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; color: #fff; font-size: .75rem;
+    font-weight: 600; line-height: 1.3; z-index: 2;
+  }
+  .hs-point {
+    position: absolute; width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    border: 2px solid rgba(255,255,255,.3);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all var(--transition); z-index: 3;
+    animation: hs-pulse 2.5s infinite;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hs-point:nth-child(3) { animation-delay: .5s; }
+  .hs-point:nth-child(4) { animation-delay: 1s; }
+  .hs-point:nth-child(5) { animation-delay: 1.5s; }
+  .hs-point:nth-child(6) { animation-delay: 2s; }
+  @keyframes hs-pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(37,99,235,.5); }
+    50%      { box-shadow: 0 0 0 8px rgba(37,99,235,.0); }
+  }
+  .hs-point:hover, .hs-point.active {
+    background: var(--accent); border-color: var(--accent);
+    box-shadow: 0 0 0 6px rgba(37,99,235,.3);
+  }
+  .hs-point .hs-icon { font-size: 1rem; }
+  .hs-tooltip {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px; width: 200px;
+    font-size: .8rem; color: var(--text);
+    box-shadow: 0 8px 24px rgba(0,0,0,.15);
+    z-index: 20; opacity: 0; pointer-events: none;
+    transform: scale(.94) translateY(4px);
+    transition: all var(--transition);
+  }
+  .hs-tooltip.visible {
+    opacity: 1; pointer-events: auto;
+    transform: scale(1) translateY(0);
+  }
+  .hs-tooltip-title {
+    font-weight: 600; font-size: .85rem;
+    margin-bottom: 5px; color: var(--accent);
+  }
+  .hs-tooltip-close {
+    position: absolute; top: 8px; right: 10px;
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); font-size: .9rem;
+  }
+  .hs-legend {
+    position: absolute; bottom: 14px; left: 0; right: 0;
+    display: flex; justify-content: center; gap: 6px;
+    font-size: .68rem; color: rgba(255,255,255,.4);
+    font-family: 'DM Mono', monospace; letter-spacing: .06em;
+    pointer-events: none;
+  }
+  .hs-legend span { display: flex; align-items: center; gap: 4px; }
+  .hs-legend-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,.3);
+    border: 1px solid rgba(255,255,255,.4);
+  }
+
+  /* ── MOBILE : accordion ── */
+  .hotspot-mobile {
+    display: none;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    background: linear-gradient(135deg, #0f1f3d 0%, #0a2240 100%);
+    padding: clamp(16px, 4vw, 24px);
+  }
+  .hs-mobile-center {
+    text-align: center; color: #fff; margin-bottom: 20px;
+  }
+  .hs-mobile-center .hs-mobile-title {
+    font-size: 1rem; font-weight: 600; letter-spacing: .04em;
+  }
+  .hs-mobile-center .hs-mobile-sub {
+    font-size: .72rem; color: rgba(255,255,255,.4);
+    font-family: 'DM Mono', monospace; margin-top: 4px;
+  }
+  .hs-accordion-item {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px; margin-bottom: 8px; overflow: hidden;
+  }
+  .hs-accordion-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background var(--transition);
+  }
+  .hs-accordion-header:hover { background: rgba(255,255,255,.05); }
+  .hs-accordion-icon { font-size: 1.1rem; }
+  .hs-accordion-label {
+    flex: 1; font-size: .85rem; font-weight: 600; color: #fff;
+  }
+  .hs-accordion-arrow {
+    font-size: .7rem; color: rgba(255,255,255,.4);
+    transition: transform var(--transition);
+  }
+  .hs-accordion-item.open .hs-accordion-arrow { transform: rotate(180deg); }
+  .hs-accordion-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height .3s ease, padding .3s ease;
+    padding: 0 16px;
+    font-size: .8rem; color: rgba(255,255,255,.75); line-height: 1.55;
+  }
+  .hs-accordion-item.open .hs-accordion-body {
+    max-height: 200px; padding: 0 16px 14px;
+  }
+
+  @media (max-width: 600px) {
+    .hotspot-container { display: none; }
+    .hotspot-mobile { display: block; }
+  }
+</style>
+</head>
+<body>
+<div class="widget-section">
+
+  <!-- Desktop : diagramme -->
+  <div class="hotspot-container">
+    <div class="hotspot-bg-text">LEAD</div>
+    <div class="hotspot-diagram">
+
+      <div class="hs-center">Leader<br>Digital</div>
+
+      <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;" viewBox="0 0 520 320">
+        <line x1="260" y1="160" x2="100" y2="55"  stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+        <line x1="260" y1="160" x2="420" y2="55"  stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+        <line x1="260" y1="160" x2="60"  y2="200" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+        <line x1="260" y1="160" x2="460" y2="200" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+        <line x1="260" y1="160" x2="260" y2="290" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+      </svg>
+
+      <div class="hs-point" style="top:36px;left:82px;"   onclick="showTooltip(this,'hs-tt-1')"><span class="hs-icon">🎯</span></div>
+      <div class="hs-point" style="top:36px;left:384px;"  onclick="showTooltip(this,'hs-tt-2')"><span class="hs-icon">🧠</span></div>
+      <div class="hs-point" style="top:182px;left:42px;"  onclick="showTooltip(this,'hs-tt-3')"><span class="hs-icon">🤝</span></div>
+      <div class="hs-point" style="top:182px;left:442px;" onclick="showTooltip(this,'hs-tt-4')"><span class="hs-icon">🔐</span></div>
+      <div class="hs-point" style="top:272px;left:242px;" onclick="showTooltip(this,'hs-tt-5')"><span class="hs-icon">📊</span></div>
+
+      <div class="hs-tooltip" id="hs-tt-1" style="top:76px;left:20px;">
+        <button class="hs-tooltip-close" onclick="closeTooltip('hs-tt-1',event)">✕</button>
+        <div class="hs-tooltip-title">Vision stratégique</div>
+        Définir une direction claire, aligner les équipes sur des objectifs communs, anticiper les disruptions technologiques.
+      </div>
+      <div class="hs-tooltip" id="hs-tt-2" style="top:76px;right:0;left:auto;">
+        <button class="hs-tooltip-close" onclick="closeTooltip('hs-tt-2',event)">✕</button>
+        <div class="hs-tooltip-title">Culture IA &amp; données</div>
+        Comprendre les capacités et limites des outils IA, promouvoir la data literacy dans toute l'organisation.
+      </div>
+      <div class="hs-tooltip" id="hs-tt-3" style="top:222px;left:20px;">
+        <button class="hs-tooltip-close" onclick="closeTooltip('hs-tt-3',event)">✕</button>
+        <div class="hs-tooltip-title">Intelligence relationnelle</div>
+        Fédérer des équipes hybrides humain-IA, gérer les résistances au changement, pratiquer l'écoute active.
+      </div>
+      <div class="hs-tooltip" id="hs-tt-4" style="top:222px;right:0;left:auto;">
+        <button class="hs-tooltip-close" onclick="closeTooltip('hs-tt-4',event)">✕</button>
+        <div class="hs-tooltip-title">Cyber-résilience</div>
+        Comprendre les risques numériques, impulser une culture sécurité et piloter la continuité en cas d'incident.
+      </div>
+      <div class="hs-tooltip" id="hs-tt-5" style="bottom:10px;left:50%;transform:translateX(-50%);">
+        <button class="hs-tooltip-close" onclick="closeTooltip('hs-tt-5',event)">✕</button>
+        <div class="hs-tooltip-title">Pilotage par la data</div>
+        Utiliser les dashboards et KPIs pour décider vite, mesurer l'impact des initiatives et itérer en continu.
+      </div>
+    </div>
+
+    <div class="hs-legend">
+      <span><span class="hs-legend-dot"></span> Cliquez sur un point pour en savoir plus</span>
+    </div>
+  </div>
+
+  <!-- Mobile : accordion -->
+  <div class="hotspot-mobile">
+    <div class="hs-mobile-center">
+      <div class="hs-mobile-title">Leader Digital</div>
+      <div class="hs-mobile-sub">Appuyez sur une compétence pour en savoir plus</div>
+    </div>
+
+    <div class="hs-accordion-item">
+      <div class="hs-accordion-header" onclick="toggleAccordion(this)">
+        <span class="hs-accordion-icon">🎯</span>
+        <span class="hs-accordion-label">Vision stratégique</span>
+        <span class="hs-accordion-arrow">▼</span>
+      </div>
+      <div class="hs-accordion-body">Définir une direction claire, aligner les équipes sur des objectifs communs, anticiper les disruptions technologiques.</div>
+    </div>
+
+    <div class="hs-accordion-item">
+      <div class="hs-accordion-header" onclick="toggleAccordion(this)">
+        <span class="hs-accordion-icon">🧠</span>
+        <span class="hs-accordion-label">Culture IA &amp; données</span>
+        <span class="hs-accordion-arrow">▼</span>
+      </div>
+      <div class="hs-accordion-body">Comprendre les capacités et limites des outils IA, promouvoir la data literacy dans toute l'organisation.</div>
+    </div>
+
+    <div class="hs-accordion-item">
+      <div class="hs-accordion-header" onclick="toggleAccordion(this)">
+        <span class="hs-accordion-icon">🤝</span>
+        <span class="hs-accordion-label">Intelligence relationnelle</span>
+        <span class="hs-accordion-arrow">▼</span>
+      </div>
+      <div class="hs-accordion-body">Fédérer des équipes hybrides humain-IA, gérer les résistances au changement, pratiquer l'écoute active.</div>
+    </div>
+
+    <div class="hs-accordion-item">
+      <div class="hs-accordion-header" onclick="toggleAccordion(this)">
+        <span class="hs-accordion-icon">🔐</span>
+        <span class="hs-accordion-label">Cyber-résilience</span>
+        <span class="hs-accordion-arrow">▼</span>
+      </div>
+      <div class="hs-accordion-body">Comprendre les risques numériques, impulser une culture sécurité et piloter la continuité en cas d'incident.</div>
+    </div>
+
+    <div class="hs-accordion-item">
+      <div class="hs-accordion-header" onclick="toggleAccordion(this)">
+        <span class="hs-accordion-icon">📊</span>
+        <span class="hs-accordion-label">Pilotage par la data</span>
+        <span class="hs-accordion-arrow">▼</span>
+      </div>
+      <div class="hs-accordion-body">Utiliser les dashboards et KPIs pour décider vite, mesurer l'impact des initiatives et itérer en continu.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTooltip(point, ttId) {
+  document.querySelectorAll('.hs-point').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.hs-tooltip').forEach(t => t.classList.remove('visible'));
+  point.classList.add('active');
+  document.getElementById(ttId).classList.add('visible');
+}
+function closeTooltip(ttId, event) {
+  event.stopPropagation();
+  document.getElementById(ttId).classList.remove('visible');
+  document.querySelectorAll('.hs-point').forEach(p => p.classList.remove('active'));
+}
+function toggleAccordion(header) {
+  const item = header.closest('.hs-accordion-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.hs-accordion-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>
