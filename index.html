@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -116,28 +116,28 @@
   <div class="card">
     <div class="memory-header">
       <div class="memory-stats">
-        <span>Paires : <strong id="mem-pairs">0 / 4</strong></span>
-        <span>Essais : <strong id="mem-tries">0</strong></span>
+        <span>Pairs: <strong id="mem-pairs">0 / 4</strong></span>
+        <span>Attempts: <strong id="mem-tries">0</strong></span>
       </div>
-      <button class="memory-btn" onclick="initMemory()">↺ Rejouer</button>
+      <button class="memory-btn" onclick="initMemory()">↺ Play again</button>
     </div>
     <div class="memory-grid-wrap">
       <div class="memory-grid" id="memory-grid"></div>
-      <div id="mem-win">🏆 Bravo ! Toutes les paires retrouvées.</div>
+      <div id="mem-win">🏆 Well done! All pairs found.</div>
     </div>
   </div>
 </div>
 
 <script>
 const memPairs = [
-  { id: 1, type:'term', text: 'Phishing',               emoji:'🎣' },
-  { id: 1, type:'def',  text: 'Email frauduleux usurpant une identite pour voler des donnees', emoji: null },
+  { id: 1, type:'term', text: 'Phishing',                emoji:'🎣' },
+  { id: 1, type:'def',  text: 'Fraudulent email impersonating an identity to steal data', emoji: null },
   { id: 2, type:'term', text: 'Zero Trust',              emoji:'🛡️' },
-  { id: 2, type:'def',  text: 'Ne faire confiance a aucun utilisateur par defaut', emoji: null },
+  { id: 2, type:'def',  text: 'Trust no user or device by default', emoji: null },
   { id: 3, type:'term', text: 'LLM',                     emoji:'🤖' },
-  { id: 3, type:'def',  text: 'Modele de langage de grande taille entraine sur textes', emoji: null },
-  { id: 4, type:'term', text: 'Leadership situationnel', emoji:'🎯' },
-  { id: 4, type:'def',  text: 'Adapter son style de management au niveau de maturite', emoji: null },
+  { id: 3, type:'def',  text: 'Large language model trained on text data', emoji: null },
+  { id: 4, type:'term', text: 'Situational Leadership',  emoji:'🎯' },
+  { id: 4, type:'def',  text: 'Adapt your management style to the team member\'s maturity level', emoji: null },
 ];
 
 let revealed = [], matched = [], tries = 0, isLocked = false;
